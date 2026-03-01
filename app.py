@@ -13,33 +13,18 @@ Base = declarative_base()
 STATIC_DIR = "/var/www/FitSurvey/assets/images"
 
 def get_image_path(equipment, image_type="photo"):
-    """이미지 경로 가져오기 (서버 호환)"""
+    """이미지 경로 가져오기 - 서버 경로 강제 사용"""
     equipment_id = equipment['id']
     image_name = f"eq_{equipment_id}_{image_type}.png"
     
-    # DB 경로가 있으면 사용
-    if image_type == "photo" and equipment.get('photo_image_path'):
-        db_path = equipment['photo_image_path']
-        if os.path.isabs(db_path):
-            return db_path
-        else:
-            return os.path.join(STATIC_DIR, os.path.basename(db_path))
-    elif image_type == "spec" and equipment.get('spec_image_path'):
-        db_path = equipment['spec_image_path']
-        if os.path.isabs(db_path):
-            return db_path
-        else:
-            return os.path.join(STATIC_DIR, os.path.basename(db_path))
-    
-    # 기본 경로 사용
+    # 서버 경로만 사용 (DB 경로 무시)
     image_path = os.path.join(STATIC_DIR, image_name)
     
-    # 디버깅 정보
-    if not os.path.exists(image_path):
-        print(f"이미지 파일 없음: {image_path}")
-        print(f"현재 디렉토리: {os.getcwd()}")
-        print(f"스크립트 경로: {os.path.dirname(__file__)}")
-        print(f"정적 디렉토리: {STATIC_DIR}")
+    # 디버깅 정보 출력
+    exists = os.path.exists(image_path)
+    print(f"[이미지] ID: {equipment_id}, 타입: {image_type}")
+    print(f"[이미지] 경로: {image_path}")
+    print(f"[이미지] 존재: {exists}")
     
     return image_path
 
