@@ -53,6 +53,8 @@ def init_database():
                 item_name varchar(100) NULL,
                 model_name varchar(100) NULL,
                 specs text NULL,
+                photo_image_path varchar(255) NULL,
+                spec_image_path varchar(255) NULL,
                 created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
                 CONSTRAINT equipment_list_pkey PRIMARY KEY (id)
             )
@@ -87,9 +89,9 @@ def get_equipment_list():
     session = get_db_session()
     try:
         query = text("""
-            SELECT id, location, category, item_name, model_name, specs
+            SELECT id, location, category, item_name, model_name, specs, photo_image_path, spec_image_path
             FROM equipment_list 
-            ORDER BY category, id
+            ORDER BY id
         """)
         result = session.execute(query)
         return [
@@ -100,7 +102,8 @@ def get_equipment_list():
                 "item_name": row.item_name,
                 "model_name": row.model_name,
                 "specs": row.specs,
-                "image_path": None
+                "photo_image_path": row.photo_image_path,
+                "spec_image_path": row.spec_image_path
             }
             for row in result
         ]
@@ -256,7 +259,7 @@ def render_equipment_page(equipment, current_vote):
     
     with tab1:
         # 장비 이미지
-        image_path = f"assets/images/eq_{equipment['id']}_photo.png"
+        image_path = equipment.get('photo_image_path', f"assets/images/eq_{equipment['id']}_photo.png")
         if os.path.exists(image_path):
             if show_photo_zoom:
                 # 확대된 이미지 표시
@@ -280,7 +283,7 @@ def render_equipment_page(equipment, current_vote):
     
     with tab2:
         # 상세 스펙 이미지 또는 텍스트
-        spec_image_path = f"assets/images/eq_{equipment['id']}_spec.png"
+        spec_image_path = equipment.get('spec_image_path', f"assets/images/eq_{equipment['id']}_spec.png")
         if os.path.exists(spec_image_path):
             if show_spec_zoom:
                 # 확대된 이미지 표시
@@ -324,8 +327,12 @@ def equipment_survey_page():
     if "current_equipment_index" not in st.session_state:
         st.session_state.current_equipment_index = 0
     
+    # DB 순서와 인덱스 일치 확인
     current_equipment = equipment_list[st.session_state.current_equipment_index]
     current_vote = st.session_state.votes.get(current_equipment["id"])
+    
+    # 디버깅 정보 (임시)
+    print(f"인덱스: {st.session_state.current_equipment_index}, ID: {current_equipment['id']}, 이름: {current_equipment['item_name']}")
     
     render_equipment_page(current_equipment, current_vote)
     
