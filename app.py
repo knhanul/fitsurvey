@@ -4,10 +4,44 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+import hashlib
 
 load_dotenv()
 
 Base = declarative_base()
+
+STATIC_DIR = "/var/www/FitSurvey/assets/images"
+
+def get_image_path(equipment, image_type="photo"):
+    """이미지 경로 가져오기 (서버 호환)"""
+    equipment_id = equipment['id']
+    image_name = f"eq_{equipment_id}_{image_type}.png"
+    
+    # DB 경로가 있으면 사용
+    if image_type == "photo" and equipment.get('photo_image_path'):
+        db_path = equipment['photo_image_path']
+        if os.path.isabs(db_path):
+            return db_path
+        else:
+            return os.path.join(STATIC_DIR, os.path.basename(db_path))
+    elif image_type == "spec" and equipment.get('spec_image_path'):
+        db_path = equipment['spec_image_path']
+        if os.path.isabs(db_path):
+            return db_path
+        else:
+            return os.path.join(STATIC_DIR, os.path.basename(db_path))
+    
+    # 기본 경로 사용
+    image_path = os.path.join(STATIC_DIR, image_name)
+    
+    # 디버깅 정보
+    if not os.path.exists(image_path):
+        print(f"이미지 파일 없음: {image_path}")
+        print(f"현재 디렉토리: {os.getcwd()}")
+        print(f"스크립트 경로: {os.path.dirname(__file__)}")
+        print(f"정적 디렉토리: {STATIC_DIR}")
+    
+    return image_path
 
 st.set_page_config(
     page_title="아파트 휘트니스 장비 교체 설문",
@@ -259,7 +293,7 @@ def render_equipment_page(equipment, current_vote):
     
     with tab1:
         # 장비 이미지
-        image_path = equipment.get('photo_image_path', f"assets/images/eq_{equipment['id']}_photo.png")
+        image_path = get_image_path(equipment, 'photo')
         if os.path.exists(image_path):
             if show_photo_zoom:
                 # 확대된 이미지 표시
@@ -283,7 +317,7 @@ def render_equipment_page(equipment, current_vote):
     
     with tab2:
         # 상세 스펙 이미지 또는 텍스트
-        spec_image_path = equipment.get('spec_image_path', f"assets/images/eq_{equipment['id']}_spec.png")
+        spec_image_path = get_image_path(equipment, 'spec')
         if os.path.exists(spec_image_path):
             if show_spec_zoom:
                 # 확대된 이미지 표시
