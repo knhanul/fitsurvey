@@ -1,0 +1,12 @@
+[browser]
+# 브라우저 탭에 표시될 기본 제목
+userTitle = "이문e편한세상휘트니스"
+# 외부 접속 시 데이터 수집 여부 (선택)
+gatherUsageStats = false
+
+[client]
+# 사이드바 등의 메뉴에서 'Made with Streamlit' 등을 숨기거나 설정
+toolbarMode = "minimal"
+
+[ui]
+hideTopBar = true
