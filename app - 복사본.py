@@ -35,305 +35,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 전역 CSS 스타일 정의 - 통합 및 상단 여백 강제 제거
-st.markdown("""
-<style>
-/* Streamlit 기본 상단 여백 완전 제거 */
-[data-testid="stAppViewBlockContainer"] {
-    padding-top: 0 !important;
-    padding-bottom: 1rem !important;
-}
-header[data-testid="stHeader"], .stAppHeader {
-    display: none !important;
-    visibility: hidden !important;
-}
-.stApp > div:first-child {
-    padding-top: 0 !important;
-}
-.stApp {
-    padding-top: 0 !important;
-}
-
-/* 전역 상단 여백 제거 */
-.stApp > div {
-    padding-top: 0 !important;
-}
-
-.main .block-container {
-    padding-top: 0.5rem !important;
-    padding-bottom: 1rem !important;
-    max-width: 800px;
-}
-
-/* Streamlit 내부 요소 상단 여백 제거 */
-.stApp > div > div > div {
-    padding-top: 0 !important;
-}
-[data-testid="stVerticalBlock"] {
-    padding-top: 0 !important;
-}
-[data-testid="stAppViewContainer"] .main,
-[data-testid="stAppViewContainer"] .block-container,
-[data-testid="stAppViewContainer"] [data-testid="stAppViewBlockContainer"] {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
-[data-testid="stHeader"] {
-    height: 0 !important;
-    min-height: 0 !important;
-}
-[data-testid="stDecoration"] {
-    display: none !important;
-}
-
-/* 텍스트 크기 계층 정상화 */
-.page-title {
-    font-size: 22px !important;
-    font-weight: 800 !important;
-    color: #333333 !important;
-    text-align: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    margin-bottom: 12px !important;
-}
-
-.section-header {
-    font-size: 18px !important;
-    font-weight: 700 !important;
-    color: #374151 !important;
-    margin: 16px 0 8px 0 !important;
-}
-
-/* 정보 박스 컴팩트화 */
-.stAlert {
-    padding: 0.75rem 1rem !important;
-    font-size: 14px !important;
-    line-height: 1.4 !important;
-}
-
-.stAlert > div {
-    padding: 0 !important;
-}
-
-/* 버튼 최적화 */
-.stButton > button {
-    padding: 8px 16px !important;
-    font-size: 14px !important;
-    min-height: 36px !important;
-    margin: 2px !important;
-}
-
-/* 투표 버튼 그리드 최적화 */
-.vote-button {
-    width: 100% !important;
-    min-height: 32px !important;
-    padding: 6px 12px !important;
-    font-size: 13px !important;
-    margin: 1px !important;
-}
-
-.vote-button.selected {
-    background-color: #2563eb !important;
-    color: white !important;
-    border-color: #2563eb !important;
-}
-
-/* 리뷰 페이지 컴팩트화 */
-.review-item {
-    padding: 8px 12px !important;
-    margin: 4px 0 !important;
-    font-size: 14px !important;
-    border-bottom: 1px solid #e5e7eb !important;
-}
-
-.review-item:last-child {
-    border-bottom: none !important;
-}
-
-/* 입력 필드 최적화 */
-.stTextInput > div > div > input,
-.stTextArea > div > div > textarea {
-    font-size: 14px !important;
-    padding: 8px !important;
-}
-
-/* 라디오 버튼 최적화 */
-.stRadio > div {
-    font-size: 14px !important;
-}
-
-/* 구분선 최적화 */
-.stDivider {
-    margin: 12px 0 !important;
-}
-
-/* 하단 버튼 최소화 - 2/3 크기로, 잘 보이지 않게 흐리게 */
-/* 이 선택자는 반드시 전역 .stButton > button보다 구체적이어야 함 */
-div[data-testid="stHorizontalBlock"]:nth-of-type(3) .stButton > button[data-testid="stBaseButton-secondary"],
-div[data-testid="stHorizontalBlock"]:nth-of-type(3) .stButton > button[data-testid="stBaseButton-primary"],
-button[key="back_to_policy"],
-button[key="go_to_review"] {
-    height: 18px !important;
-    min-height: 18px !important;
-    max-height: 18px !important;
-    min-width: auto !important;
-    width: auto !important;
-    padding: 1px 4px !important;
-    font-size: 8px !important;
-    color: #9ca3af !important;
-    background-color: #f3f4f6 !important;
-    border: 1px solid #d1d5db !important;
-    opacity: 0.5 !important;
-    box-shadow: none !important;
-}
-div[data-testid="stHorizontalBlock"]:nth-of-type(3) .stButton > button:hover,
-button[key="back_to_policy"]:hover,
-button[key="go_to_review"]:hover {
-    opacity: 0.7 !important;
-    background-color: #e5e7eb !important;
-}
-
-/* 장비 투표 화면 스타일 */
-.equipment-header {
-    background-color: #f3f4f6;
-    padding: 10px 14px;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-}
-.location-badge {
-    display: inline-flex;
-    align-items: center;
-    background-color: #eff6ff;
-    color: #3b82f6;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 600;
-    border: 1px solid #dbeafe;
-    flex-shrink: 0;
-}
-.equipment-title {
-    font-size: 20px !important;
-    font-weight: 700 !important;
-    color: #111827 !important;
-    line-height: 1.3 !important;
-    margin: 0 !important;
-}
-
-/* 투표 버튼 그리드 - 2x2 고정 및 크기 고정 */
-.stHorizontalBlock {
-    max-width: 520px;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    gap: 4px !important;
-}
-.stHorizontalBlock > div {
-    flex: 0 0 calc(50% - 2px) !important;
-    min-width: 0 !important;
-    max-width: calc(50% - 2px) !important;
-}
-.stButton > button {
-    width: 100% !important;
-    height: 50px !important;
-    min-height: 50px !important;
-    max-height: 50px !important;
-    padding: 8px 12px !important;
-    font-size: 13px !important;
-    margin: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 6px !important;
-    white-space: normal !important;
-    line-height: 1.2 !important;
-}
-.stButton > button:has(.vote-selected) {
-    background-color: #2563eb !important;
-    color: white !important;
-    border-color: #2563eb !important;
-}
-
-/* 이미지 탭 */
-.stTabs [data-baseweb="tab-list"] {
-    background-color: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 0 12px;
-}
-.stTabs [data-baseweb="tab"] {
-    padding: 8px 12px;
-    font-size: 14px;
-    font-weight: 500;
-}
-.stTabs [data-baseweb="tab"]:hover {
-    background-color: #f3f4f6;
-}
-
-/* 이미지 컨테이너 */
-.image-container {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 12px;
-    margin: 12px 0;
-    text-align: center;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* 하단 내비게이션 - 4개 버튼 2x2 레이아웃 */
-.nav-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #ffffff;
-    border-top: 1px solid #e5e7eb;
-    padding: 8px 16px;
-    z-index: 999;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
-}
-.page-indicator {
-    text-align: center;
-    font-size: 12px;
-    color: #6b7280;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-.nav-buttons {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-.nav-buttons button {
-    flex: 1;
-    height: 36px !important;
-    min-height: 36px !important;
-    max-height: 36px !important;
-    padding: 6px 12px !important;
-    font-size: 12px !important;
-    margin: 0 !important;
-}
-.action-buttons {
-    display: flex;
-    gap: 8px;
-}
-.action-buttons button {
-    flex: 1;
-    height: 36px !important;
-    min-height: 36px !important;
-    max-height: 36px !important;
-    padding: 6px 12px !important;
-    font-size: 12px !important;
-    margin: 0 !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
 VOTE_OPTIONS = {
     "새로 교체": "🎯 새 장비로 교체",
     "계속 사용": "📋 기존 기구 계속 사용", 
@@ -500,6 +201,141 @@ def get_user_votes(phone_suffix, unit_number):
 def render_equipment_page(equipment, current_vote, total_equipment, current_index, prev_equipment_name="", next_equipment_name=""):
     """장비 상세 페이지 렌더링 - 모바일 최적화 디자인"""
     
+    # CSS 스타일링
+    st.markdown("""
+    <style>
+    /* Streamlit 헤더 숨김 */
+    header {visibility: hidden; display: none;}
+    .stApp > header {visibility: hidden; display: none;}
+    .stDeployButton {display: none;}
+    [data-testid="stToolbar"] {display: none;}
+    [data-testid="stMainMenu"] {display: none;}
+    
+    /* 상단 여백 제거 */
+    .main > div:first-child {padding-top: 0 !important;}
+    .block-container {padding: 0 !important; margin: 0 !important;}
+    
+    /* 커스텀 헤더 스타일 */
+    .equipment-header {
+        background-color: #f3f4f6;
+        padding: 12px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+    .location-badge {
+        display: inline-flex;
+        align-items: center;
+        background-color: #eff6ff;
+        color: #3b82f6;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 600;
+        border: 1px solid #dbeafe;
+        flex-shrink: 0;
+    }
+    .equipment-title {
+        font-size: 28px !important;
+        font-weight: 700 !important;
+        color: #111827 !important;
+        line-height: 1.3 !important;
+        margin: 0 !important;
+    }
+
+    /* 투표/하단 버튼: 스마트폰 최적화 폭으로 고정 + 가운데 정렬 */
+    .stHorizontalBlock {
+        max-width: 520px;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+    
+    /* 투표 버튼 그리드 - 반드시 2x2 유지 */
+    .stHorizontalBlock {
+        flex-wrap: nowrap !important;
+    }
+    .stHorizontalBlock > div {
+        flex: 0 0 50% !important;
+        min-width: 0 !important;
+        max-width: 50% !important;
+    }
+    
+    /* 투표 버튼 스타일 */
+    .stButton > button {
+        width: 100% !important;
+        min-height: 32px !important;
+        padding: 3px 8px !important;
+        font-size: 10px !important;
+        line-height: 1.1 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 4px !important;
+        white-space: normal !important;
+    }
+    
+    /* 탭 스타일 */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .stTabs [data-baseweb="tab"] {
+        padding: 8px 12px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .stTabs [aria-selected="true"] {
+        color: #ef4444 !important;
+        border-bottom: 2px solid #ef4444 !important;
+    }
+    
+    /* 이미지 컨테이너 */
+    .image-container {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 16px;
+        margin: 0 16px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 300px;
+    }
+    
+    /* 네비게이션 푸터 */
+    .nav-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 12px;
+        border-top: 1px solid #e5e7eb;
+        font-size: 12px;
+    }
+    .page-indicator {
+        font-size: 12px;
+        color: #6b7280;
+    }
+    .page-indicator span {
+        color: #111827;
+        font-weight: 700;
+    }
+    
+    /* 하단 버튼 영역 */
+    .bottom-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 16px;
+        background: white;
+        border-top: 1px solid #e5e7eb;
+        position: sticky;
+        bottom: 0;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # 헤더 섹션 - 한 줄로 구성
     location = equipment.get('location', '정보 없음')
     item_name = equipment['item_name']
@@ -629,41 +465,35 @@ def render_equipment_page(equipment, current_vote, total_equipment, current_inde
         else:
             st.info("스펙 정보가 없습니다.")
     
-    # 하단 버튼 2줄 레이아웃
+    # 페이지 네비게이션과 하단 버튼
+    st.markdown(f"""
+    <div class="nav-footer">
+        <span class="page-indicator">장비 <span>{current_index + 1}</span> / {total_equipment} &nbsp;|&nbsp; 현재: {equipment.get('item_name','')}</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 하단 액션 버튼 - 최소화 (이전/다음 장비명 포함)
     col_prev, col_next = st.columns(2)
     with col_prev:
         if current_index > 0:
             if st.button(f"⬅️ {prev_equipment_name}", key="prev_equipment", width='stretch'):
                 st.session_state.current_equipment_index = current_index - 1
                 st.rerun()
-        else:
-            st.button("⬅️ 이전 장비", key="prev_equipment_disabled", width='stretch', disabled=True)
-
+    
     with col_next:
         if current_index < total_equipment - 1:
             if st.button(f"{next_equipment_name} ➡️", key="next_equipment", width='stretch'):
                 st.session_state.current_equipment_index = current_index + 1
                 st.rerun()
-        else:
-            st.button("다음 장비 ➡️", key="next_equipment_disabled", width='stretch', disabled=True)
-
-    st.markdown(
-        f'<div style="text-align:center; font-size:14px; font-weight:700; color:#1f2937; margin:2px 0 3px;">'
-        f'<span style="color:#6b7280;">현재 장비:</span> {equipment.get("item_name", "")} &nbsp;|&nbsp; '
-        f'<span style="color:#2563eb; font-size:15px; font-weight:800;">{current_index + 1}</span>'
-        f'<span style="color:#9ca3af;">/{total_equipment}</span>'
-        f'</div>',
-        unsafe_allow_html=True,
-    )
-
-    col_policy, col_review = st.columns(2)
-    with col_policy:
-        if st.button("← 1단계(정책 투표) 수정하기", key="back_to_policy", width='stretch'):
+    
+    col_back, col_review = st.columns(2)
+    with col_back:
+        if st.button("← 정책 페이지", width='stretch'):
             st.session_state.page = "policy_survey"
             st.rerun()
-
+    
     with col_review:
-        if st.button("내 투표 확인하고 최종 제출 →", key="go_to_review", width='stretch'):
+        if st.button("최종(리뷰) 페이지 →", width='stretch', type="primary"):
             st.session_state.page = "review"
             st.rerun()
 
@@ -721,9 +551,21 @@ def equipment_survey_page():
 
 
 def policy_survey_page():
-    st.markdown('<div class="page-title">🏘️ 장비 교체 정책 투표</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+    .policy-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333333;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+    </style>
+    <div class="policy-title">🏘️ 장비 교체 정책 투표</div>
+    """, unsafe_allow_html=True)
     
-    st.markdown('<div class="section-header">💡 교체 범위 및 예산 계획 안내</div>', unsafe_allow_html=True)
+    st.markdown("### 💡 교체 범위 및 예산 계획 안내")
     st.info("""
     * **교체 범위**: '전체 일괄 교체' 방식은 노후화가 심한 **근력 운동 기구에만 적용**됩니다. (비교적 상태가 양호한 러닝머신, 일립티컬, 실내 사이클 등 유산소 기구는 교체 제외)
     * **도입 브랜드 (개선스포츠 선정 이유)**: 국내 헬스장 및 아파트 전문 브랜드인 **'개선스포츠'**로 도입할 예정입니다. 수입산 기구와 달리 **부품 수급이 매우 빠르고 유지보수(A/S) 비용이 저렴**하며, 한국인 체형에 맞는 설계와 뛰어난 내구성으로 전국 수많은 상업용 헬스장에서 가장 널리 검증된 합리적인 브랜드이기 때문입니다.
@@ -732,8 +574,10 @@ def policy_survey_page():
     * **운영 계획**: 모자란 예산을 한 번에 무리해서 지출하지 않고, **약 1,000만 원 규모는 렌탈 방식**을 활용할 예정입니다. 이 경우 **월 렌탈비는 약 25만 원** 수준으로 휘트니스 운영 수익 내에서 충분히 감당 가능한 금액입니다.
     """)
     
+    st.divider()
+    
     # 부드러운 넛지(Nudge) 방식의 기본 정보 입력 섹션
-    st.markdown('<div class="section-header">📝 참여자 기본 정보</div>', unsafe_allow_html=True)
+    st.subheader("📝 참여자 기본 정보")
     st.markdown("<span style='font-size: 14px; color: #666;'>단지 내 다양한 세대의 의견을 고르게 수렴하기 위해 거주하시는 <b>동</b>과 <b>전화번호 뒷자리</b>를 입력해 주세요.</span>", unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
@@ -751,7 +595,9 @@ def policy_survey_page():
             placeholder="예: 1234"
         )
     
-    st.markdown('<div class="section-header">📝 장비 교체 정책 의견</div>', unsafe_allow_html=True)
+    st.divider()
+    
+    st.subheader("📝 장비 교체 정책 의견")
     st.markdown("위 안내를 참고하시어, 선호하시는 장비 교체 방식을 선택해 주세요.")
     policy_choice = st.radio(
         "선택지",
@@ -760,7 +606,7 @@ def policy_survey_page():
     )
     
     # 추가 요청사항 섹션
-    st.markdown('<div class="section-header">💬 추가 요청사항 (선택)</div>', unsafe_allow_html=True)
+    st.subheader("💬 추가 요청사항 (선택)")
     st.markdown("""
     <span style="font-size: 14px; color: #4b5563;">
     추가로 희망하시는 장비가 있다면, 가급적 포털 사이트에서 <b>'개선스포츠'</b> 브랜드를 검색해 보신 후 
@@ -774,6 +620,8 @@ def policy_survey_page():
         placeholder="예: 개선스포츠 암컬 머신(UT101) 추가 설치 희망, 기존 장비 위치 변경 등",
         label_visibility="collapsed"
     )
+    
+    st.divider()
     
     col1, col2 = st.columns(2)
     with col1:
@@ -816,16 +664,14 @@ def policy_survey_page():
 
 
 def thank_you_page():
-    st.markdown('<div class="page-title">🎉 설문 완료</div>', unsafe_allow_html=True)
+    st.title("🎉 설문 완료")
     st.markdown("""
-    <div style="text-align: center; padding: 16px 0;">
-        <div style="font-size: 16px; font-weight: 600; color: #374151; margin-bottom: 8px;">감사합니다!</div>
-        <div style="font-size: 14px; color: #6b7280; line-height: 1.5;">
-            소중한 의견을 제출해 주셔서 감사합니다.<br>
-            입주민 여러분의 의견을 바탕으로 더 나은 휘트니스 시설을 준비하겠습니다.
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    ## 감사합니다!
+    
+    소중한 의견을 제출해 주셔서 감사합니다.
+    
+    입주민 여러분의 의견을 바탕으로 더 나은 휘트니스 시설을 준비하겠습니다.
+    """)
     
     st.markdown("""
     <div style="text-align: center; margin-top: 20px;">
@@ -847,13 +693,41 @@ def thank_you_page():
 
 
 def intro_page():
-    st.markdown('<div class="page-title">🏘️ 우리 아파트 휘트니스, 안전하고 쾌적하게 바꿀 때입니다!</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+    .intro-container {
+        padding: 0;
+        margin: 0;
+    }
+    .intro-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1f77b4;
+        text-align: center;
+        margin-bottom: 4px;
+    }
+    .intro-subtitle {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333333;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 16px;
+    }
+    </style>
+    <div class="intro-container">
+        <div class="intro-title">🏘️ 우리 아파트 휘트니스,</div>
+        <div class="intro-subtitle">안전하고 쾌적하게 바꿀 때입니다!</div>
+    </div>
+    """, unsafe_allow_html=True)
     
     # 부드러운 안내 메시지 (파란색 박스)
     st.info("안녕하세요. 입주민 및 휘트니스 회원 여러분.\n\n단지 내 휘트니스 센터의 노후 환경을 개선하고, 안전한 운동 공간을 조성하기 위해 여러분의 소중한 의견을 수렴하고자 합니다.")
     
+    st.divider()
+    
     # 배경 설명
-    st.markdown('<div class="section-header">📅 왜 지금 교체를 추진하나요?</div>', unsafe_allow_html=True)
+    st.markdown("### 📅 왜 지금 교체를 추진하나요?")
     st.markdown("""
     2008년 개장 후 17년이 지나 기구들의 평균 내구연한(7~12년)을 훌쩍 넘겼습니다. 잦은 와이어 단선과 부품 수급 불가로 안전사고 위험마저 커지고 있습니다. 
     
@@ -861,7 +735,7 @@ def intro_page():
     """)
     
     # 예산 설명 (초록색 강조 박스)
-    st.markdown('<div class="section-header">💰 4,000만 원, 투명하게 씁니다!</div>', unsafe_allow_html=True)
+    st.markdown("### 💰 4,000만 원, 투명하게 씁니다!")
     st.success("""
     그동안 **회원님들이 납부하신 이용 요금으로 약 4,000만 원의 적립금**이 마련되었습니다. 
     
@@ -869,13 +743,15 @@ def intro_page():
     """)
     
     # 설문 방법 안내
-    st.markdown('<div class="section-header">🔍 설문 안내 (단 2단계!)</div>', unsafe_allow_html=True)
+    st.markdown("### 🔍 설문 안내 (단 2단계!)")
     st.markdown("""
     * **1단계 (교체 방식):** 예산 내 전체 일괄 교체 vs 고장 장비 선별 교체
     * **2단계 (개별 장비 투표):** 각 장비 사진을 보고 '새로 교체 / 계속 사용 / 완전 철거 / 잘 모름' 선택
     
     여러분의 소중한 1표가 명품 휘트니스를 만듭니다. 지금 바로 아래 버튼을 눌러 설문을 시작해 주세요!
     """)
+    
+    st.divider()
     
     # 다음 페이지 이동 버튼
     if st.button("👉 설문 시작하기", use_container_width=True, type="primary"):
@@ -884,8 +760,8 @@ def intro_page():
 
 
 def review_page():
-    """장비별 선택 내역 검토 및 추가 의견 입력 페이지 - 컴팩트한 디자인"""
-    st.markdown('<div class="page-title">📝 선택 내역 검토</div>', unsafe_allow_html=True)
+    """장비별 선택 내역 검토 및 추가 의견 입력 페이지"""
+    st.title("📝 선택 내역 검토")
     
     if "phone_suffix" not in st.session_state or "unit_number" not in st.session_state:
         st.session_state.page = "policy_survey"
@@ -896,8 +772,8 @@ def review_page():
     unit_number = st.session_state.unit_number
     
     st.markdown(f"""
-    <div style="background-color: #f0f2f6; padding: 10px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
-        📱 ****-{phone_suffix} | 🏠 {unit_number}동
+    <div style="background-color: #f0f2f6; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <p style="margin: 0; font-size: 16px;">📱 전화번호: ****-{phone_suffix} | 🏠 동 번호: {unit_number}동</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -905,36 +781,36 @@ def review_page():
     equipment_list = get_equipment_list()
     votes = st.session_state.get("votes", {})
     
-    st.markdown('<div class="section-header">📋 장비별 선택 내역</div>', unsafe_allow_html=True)
+    st.subheader("📋 장비별 선택 내역")
     
     if not votes:
         st.warning("아직 선택한 장비가 없습니다. 장비별 투표는 건너뛰고 추가 의견만 제출할 수 있습니다.")
         if st.button("← 장비별 투표하러 가기", width='stretch'):
             st.session_state.page = "equipment_survey"
             st.rerun()
-    else:
-        # 컴팩트한 리스트 형태로 표시
-        for equipment in equipment_list:
-            equipment_id = equipment["id"]
-            if equipment_id in votes:
-                vote = votes[equipment_id]
-                vote_display = VOTE_OPTIONS.get(vote, vote)
-                
-                st.markdown(f"""
-                <div class="review-item">
-                    <strong>{equipment['item_name']}</strong>: {vote_display}
-                </div>
-                """, unsafe_allow_html=True)
+    
+    # 선택 내역 테이블
+    for equipment in equipment_list:
+        eq_id = equipment["id"]
+        if eq_id in votes:
+            vote = votes[eq_id]
+            display = VOTE_OPTIONS.get(vote, vote)
+            st.markdown(f"""
+            <div style="display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #eee;">
+                <span>{equipment['item_name']}</span>
+                <span style="font-weight: bold;">{display}</span>
+            </div>
+            """, unsafe_allow_html=True)
     
     st.divider()
     
-    # 추가 요청사항 섹션
-    st.markdown('<div class="section-header">💬 추가 요청사항 (선택)</div>', unsafe_allow_html=True)
+    # 추가 요청사항 입력
+    st.subheader("💬 추가 요청사항 (선택)")
     
     # 기존 값이 있으면 불러오기
     default_requests = st.session_state.get("additional_requests", "")
     additional_requests = st.text_area(
-        "요청사항",
+        "추가로 요청하실 사항이 있다면 작성해주세요",
         value=default_requests,
         placeholder="예: 특정 장비 추가 설치 희망, 기존 장비 위치 변경 등",
         label_visibility="collapsed"
