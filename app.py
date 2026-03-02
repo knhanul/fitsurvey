@@ -30,8 +30,8 @@ def get_image_path(equipment, image_type="photo"):
     return image_path
 
 st.set_page_config(
-    page_title="아파트 휘트니스 장비 교체 입주민 설문",
-    page_icon="assets/images/Imune_logo_t.png",
+    page_title="이문e편한세상휘트니스",
+    page_icon="imune_log_t.png",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
@@ -39,34 +39,61 @@ st.set_page_config(
 # Open Graph 메타 태그 추가 (공유 시 미리보기 최적화)
 st.markdown("""
 <head>
-    <meta property="og:title" content="아파트 휘트니스 장비 교체 입주민 설문">
+    <meta property="og:title" content="이문e편한세상휘트니스">
     <meta property="og:description" content="입주민 여러분의 소중한 의견으로 더 나은 휘트니스를 만듭니다.">
-    <meta property="og:image" content="/assets/images/og_survey.png">
+    <meta property="og:image" content="imune_log_t.png">
     <meta property="og:type" content="website">
 </head>
 """, unsafe_allow_html=True)
 
-# 스크롤 최상단 이동 함수
+# 초기 페이지 타이틀 설정 및 최상단 스크롤
+components.html("""
+    <script>
+        document.title = "이문e편한세상휘트니스";
+        window.parent.document.querySelector('.main').scrollTo(0,0);
+        setTimeout(function() {
+            window.parent.document.querySelector('.main').scrollTo(0,0);
+        }, 100);
+    </script>
+""", height=0)
+
+# 스크롤 최상단 이동 함수 - 페이지 전환 시 즉시 실행
 def scroll_to_top():
-    components.html("<script>window.parent.document.querySelector('.main').scrollTo(0,0);</script>", height=0)
+    components.html("""
+        <script>
+            // 페이지 타이틀 변경
+            document.title = "이문e편한세상휘트니스";
+            
+            // 즉시 스크롤
+            window.parent.document.querySelector('.main').scrollTo(0,0);
+            
+            // 여러 지연 시간으로 반복 실행
+            setTimeout(function() {
+                window.parent.document.querySelector('.main').scrollTo(0,0);
+                document.title = "이문e편한세상휘트니스";
+            }, 50);
+            setTimeout(function() {
+                window.parent.document.querySelector('.main').scrollTo(0,0);
+            }, 100);
+            setTimeout(function() {
+                window.parent.document.querySelector('.main').scrollTo(0,0);
+            }, 200);
+        </script>
+    """, height=0)
 
 
-def render_committee_signature(logo_width=28):
-    """운영 주체 시그니처(로고 + 문구) 표시"""
-    logo_path = os.path.join(STATIC_DIR, "Imune_logo_t.png")
-    brand_color = "#2563eb"
+def render_committee_signature():
+    """운영 주체 문구 표시 - 가운데 정렬 (로고 제거)"""
+    # 로고 메인 색상
+    brand_color = "#1e40af"
 
-    col_logo, col_text = st.columns([1, 7])
-    with col_logo:
-        if os.path.exists(logo_path):
-            st.image(logo_path, width=logo_width)
-    with col_text:
-        st.markdown(
-            f'<div style="color:{brand_color}; font-size:13px; font-weight:700; line-height:1.9;">'
-            '이문e편한세상휘트니스운영위원회'
-            '</div>',
-            unsafe_allow_html=True,
-        )
+    # 문구만 표시 (로고 제거)
+    st.markdown(
+        f'<div style="color:{brand_color}; font-size:13px; font-weight:700; text-align:center; margin-top:8px;">'
+        '이문e편한세상휘트니스운영위원회'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
 # 전역 CSS 스타일 정의 - 통합 및 상단 여백 강제 제거
 st.markdown("""
@@ -128,6 +155,46 @@ section.main > div > div,
 }
 [data-testid="stToolbar"] {
     display: none !important;
+}
+
+/* 최상단 여백 제거 - 가장 강력한 우선순위 */
+html, body, .stApp, [data-testid="stAppViewContainer"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* 모든 최상위 컨테이너 여백 제거 */
+[data-testid="stAppViewContainer"] > div,
+[data-testid="stAppViewContainer"] > section,
+[data-testid="stAppViewBlockContainer"] > div {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* 첫 번째 블록 여백 제거 */
+[data-testid="stVerticalBlock"] > div:first-child,
+[data-testid="stVerticalBlock"] > div:first-child > div {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* 메인 콘텐츠 영역 최상단 정렬 */
+.main .block-container > div:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* 헤더 완전 숨김 */
+[data-testid="stHeader"],
+.stAppHeader,
+[data-testid="stDecoration"],
+[data-testid="stToolbar"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* 텍스트 크기 계층 정상화 - 다크모드 대응 */
@@ -377,6 +444,30 @@ button[key="go_to_review"]:hover {
     padding: 6px 12px !important;
     font-size: 12px !important;
     margin: 0 !important;
+}
+
+/* 상단 여백 완전 제거 - 극단적 */
+* {
+    margin-top: 0 !important;
+}
+
+/* 최상단 요소들 여백 제거 */
+[data-testid="stAppViewBlockContainer"] > div:first-child,
+.block-container > div:first-child,
+[data-testid="stVerticalBlock"] > div:first-child,
+.main > div:first-child,
+.stApp > div:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* 첫 번째 요소의 상단 마진 제거 */
+[data-testid="stAppViewBlockContainer"] > div:first-of-type,
+.block-container > div:first-of-type,
+[data-testid="stVerticalBlock"] > div:first-of-type,
+.main > div:first-of-type {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -942,7 +1033,7 @@ def intro_page():
     여러분의 소중한 1표가 명품 휘트니스를 만듭니다. 지금 바로 아래 버튼을 눌러 설문을 시작해 주세요!
     """)
 
-    render_committee_signature(logo_width=28)
+    render_committee_signature()
     
     # 다음 페이지 이동 버튼
     if st.button("👉 설문 시작하기", use_container_width=True, type="primary"):
@@ -1029,8 +1120,32 @@ def review_page():
                 st.rerun()
 
 
+def render_header():
+    """사이트 상단 로고 및 타이틀 표시"""
+    logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "imune_log_t.png")
+    
+    # 가운데 정렬된 헤더 컨테이너
+    st.markdown("<div style='text-align: center; margin-bottom: 10px;'>", unsafe_allow_html=True)
+    
+    # 로고 표시
+    if os.path.exists(logo_path):
+        st.image(logo_path, width=60)
+    
+    # 사이트 타이틀 표시 (로고 메인 색상)
+    st.markdown(
+        '<div style="color:#1e40af; font-size:18px; font-weight:800; text-align:center; margin-top:4px;">'
+        '이문e편한세상휘트니스'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
 def main():
     init_database()
+    
+    # 헤더 제거됨
     
     if "page" not in st.session_state:
         st.session_state.page = "intro"
