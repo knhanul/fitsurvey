@@ -7,6 +7,14 @@ import os
 from dotenv import load_dotenv
 import hashlib
 
+# Streamlit 페이지 설정 - 반드시 imports 바로 다음에 위치
+st.set_page_config(
+    page_title="이문e편한세상휘트니스",
+    page_icon="imune_log_t.png",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
+
 load_dotenv()
 
 Base = declarative_base()
@@ -29,13 +37,6 @@ def get_image_path(equipment, image_type="photo"):
     
     return image_path
 
-st.set_page_config(
-    page_title="이문e편한세상휘트니스",
-    page_icon="imune_log_t.png",
-    layout="centered",
-    initial_sidebar_state="collapsed"
-)
-
 # Open Graph 메타 태그 추가 (공유 시 미리보기 최적화)
 st.markdown("""
 <head>
@@ -47,39 +48,113 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 초기 페이지 타이틀 설정 및 최상단 스크롤
-components.html("""
-    <script>
-        document.title = "이문e편한세상휘트니스";
-        window.parent.document.querySelector('.main').scrollTo(0,0);
-        setTimeout(function() {
-            window.parent.document.querySelector('.main').scrollTo(0,0);
-        }, 100);
-    </script>
-""", height=0)
+st.markdown("""
+<script>
+// DOM이 완전히 로드된 후 실행
+document.addEventListener('DOMContentLoaded', function() {
+    document.title = "이문e편한세상휘트니스";
+});
 
-# 스크롤 최상단 이동 함수 - 페이지 전환 시 즉시 실행
+// Streamlit 렌더링 후 실행을 위한 여러 방법
+window.addEventListener('load', function() {
+    document.title = "이문e편한세상휘트니스";
+    if (window.parent && window.parent.document) {
+        const mainElement = window.parent.document.querySelector('.main');
+        if (mainElement) {
+            mainElement.scrollTop = 0;
+        }
+    }
+});
+
+// 주기적으로 체크하여 실행
+var checkInterval = setInterval(function() {
+    document.title = "이문e편한세상휘트니스";
+    if (window.parent && window.parent.document) {
+        const mainElement = window.parent.document.querySelector('.main');
+        if (mainElement) {
+            mainElement.scrollTop = 0;
+            clearInterval(checkInterval);
+        }
+    }
+}, 100);
+
+// 5초 후 중지
+setTimeout(function() {
+    clearInterval(checkInterval);
+}, 5000);
+</script>
+""", unsafe_allow_html=True)
+
+# 스크롤 최상단 이동 함수 - CSS 기반 방식
 def scroll_to_top():
-    components.html("""
-        <script>
-            // 페이지 타이틀 변경
-            document.title = "이문e편한세상휘트니스";
-            
-            // 즉시 스크롤
-            window.parent.document.querySelector('.main').scrollTo(0,0);
-            
-            // 여러 지연 시간으로 반복 실행
-            setTimeout(function() {
-                window.parent.document.querySelector('.main').scrollTo(0,0);
-                document.title = "이문e편한세상휘트니스";
-            }, 50);
-            setTimeout(function() {
-                window.parent.document.querySelector('.main').scrollTo(0,0);
-            }, 100);
-            setTimeout(function() {
-                window.parent.document.querySelector('.main').scrollTo(0,0);
-            }, 200);
-        </script>
-    """, height=0)
+    # CSS를 통한 스크롤 강제
+    st.markdown("""
+<style>
+.main {
+    scroll-behavior: auto !important;
+    scroll-margin-top: 0 !important;
+}
+
+/* 페이지 로드 시 즉시 스크롤 리셋 */
+.stApp > div:first-child {
+    scroll-margin-top: 0 !important;
+}
+
+/* iframe 내부 스크롤 제거 */
+iframe {
+    overflow: hidden !important;
+}
+</style>
+
+<script>
+// 즉시 실행
+document.title = "이문e편한세상휘트니스";
+
+// Streamlit의 메인 컨테이너 찾아서 스크롤
+function scrollToTop() {
+    // 여러 선택자 시도
+    const selectors = ['.main', '[data-testid="stAppViewContainer"]', '.stApp'];
+    
+    selectors.forEach(selector => {
+        try {
+            const element = window.parent.document.querySelector(selector);
+            if (element) {
+                element.scrollTop = 0;
+                element.scrollIntoView({ behavior: 'instant', block: 'start' });
+            }
+        } catch (e) {
+            // 무시
+        }
+    });
+}
+
+// 여러 타이밍에 실행
+scrollToTop();
+setTimeout(scrollToTop, 10);
+setTimeout(scrollToTop, 50);
+setTimeout(scrollToTop, 100);
+setTimeout(scrollToTop, 300);
+
+// MutationObserver로 DOM 변경 감지
+if (window.parent && window.parent.MutationObserver) {
+    const observer = new MutationObserver(function(mutations) {
+        scrollToTop();
+    });
+    
+    const targetNode = window.parent.document.querySelector('.main');
+    if (targetNode) {
+        observer.observe(targetNode, { 
+            childList: true, 
+            subtree: true,
+            attributes: true 
+        });
+        
+        // 3초 후 관찰 중지
+        setTimeout(() => observer.disconnect(), 3000);
+    }
+}
+</script>
+""", unsafe_allow_html=True)
 
 
 def render_committee_signature():
@@ -653,7 +728,7 @@ def render_equipment_page(equipment, current_vote, total_equipment, current_inde
     </div>
     """, unsafe_allow_html=True)
     
-    # 투표 버튼 (2x2 그리드) - 아이콘과 컬러 변경
+    # 투표 버튼 (2x2 그리드) - 통일된 하이라이트 스타일
     vote_icons = {
         "새로 교체": "🎯",
         "계속 사용": "📋",
@@ -668,83 +743,61 @@ def render_equipment_page(equipment, current_vote, total_equipment, current_inde
         "의견 없음": "잘 모름<br>(기권)"
     }
     
+    # 선택된 버튼에 대한 통일된 하이라이트 색상
+    highlight_colors = {
+        "새로 교체": "#dbeafe",  # 파란색 계열
+        "계속 사용": "#dbeafe",  # 파란색 계열
+        "완전 철거": "#dbeafe",  # 파란색 계열
+        "의견 없음": "#dbeafe"   # 파란색 계열
+    }
+    
     col1, col2 = st.columns(2)
     vote_items = list(VOTE_OPTIONS.items())
+    
+    # 선택된 버튼에 대한 하이라이트 CSS 적용 (한 번만 적용)
+    if current_vote:
+        selected_button_key = f"vote_{equipment['id']}_{current_vote}"
+        st.markdown(f"""
+        <style>
+        button[data-testid="stBaseButton-secondary"][key="{selected_button_key}"] {{
+            background-color: #dbeafe !important;
+            border: 2px solid #3b82f6 !important;
+            color: #1e40af !important;
+            font-weight: 700 !important;
+        }}
+        </style>
+        """, unsafe_allow_html=True)
     
     # 첫 번째 행
     with col1:
         label1, display1 = vote_items[0]
         icon1 = vote_icons[label1]
-        is_selected1 = current_vote == label1
         
-        if is_selected1:
-            st.markdown(f"""
-            <div style="background: #dbeafe; border: 2px solid #3b82f6; border-radius: 12px; padding: 10px 12px;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <div style="font-size: 18px;">{icon1}</div>
-                    <div style="font-size: 11px; font-weight: 700; color: #1e40af;">새 장비로 교체</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            if st.button(f"{icon1} 새 장비로 교체", key=f"vote_{equipment['id']}_{label1}", width='stretch'):
-                handle_vote(equipment, label1, current_index, total_equipment)
+        if st.button(f"{icon1} {vote_labels[label1].replace('<br>', ' ')}", key=f"vote_{equipment['id']}_{label1}", width='stretch'):
+            handle_vote(equipment, label1, current_index, total_equipment)
     
     with col2:
         label2, display2 = vote_items[1]
         icon2 = vote_icons[label2]
-        is_selected2 = current_vote == label2
         
-        if is_selected2:
-            st.markdown(f"""
-            <div style="background: #f9fafb; border: 1px solid #d1d5db; border-radius: 12px; padding: 10px 12px;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <div style="font-size: 18px;">{icon2}</div>
-                    <div style="font-size: 11px; font-weight: 500; color: #6b7280;">기존 기구 계속 사용</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            if st.button(f"{icon2} 기존 기구 계속 사용", key=f"vote_{equipment['id']}_{label2}", width='stretch'):
-                handle_vote(equipment, label2, current_index, total_equipment)
+        if st.button(f"{icon2} {vote_labels[label2].replace('<br>', ' ')}", key=f"vote_{equipment['id']}_{label2}", width='stretch'):
+            handle_vote(equipment, label2, current_index, total_equipment)
     
     # 두 번째 행
     col3, col4 = st.columns(2)
     with col3:
         label3, display3 = vote_items[2]
         icon3 = vote_icons[label3]
-        is_selected3 = current_vote == label3
         
-        if is_selected3:
-            st.markdown(f"""
-            <div style="background: #fee2e2; border: 2px solid #ef4444; border-radius: 12px; padding: 10px 12px;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <div style="font-size: 18px;">{icon3}</div>
-                    <div style="font-size: 11px; font-weight: 700; color: #991b1b;">불필요 (완전 철거)</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            if st.button(f"{icon3} 불필요 (완전 철거)", key=f"vote_{equipment['id']}_{label3}", width='stretch'):
-                handle_vote(equipment, label3, current_index, total_equipment)
+        if st.button(f"{icon3} {vote_labels[label3].replace('<br>', ' ')}", key=f"vote_{equipment['id']}_{label3}", width='stretch'):
+            handle_vote(equipment, label3, current_index, total_equipment)
     
     with col4:
         label4, display4 = vote_items[3]
         icon4 = vote_icons[label4]
-        is_selected4 = current_vote == label4
         
-        if is_selected4:
-            st.markdown(f"""
-            <div style="background: #f3f4f6; border: 2px solid #9ca3af; border-radius: 12px; padding: 10px 12px;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <div style="font-size: 18px;">{icon4}</div>
-                    <div style="font-size: 11px; font-weight: 600; color: #4b5563;">잘 모름 (기권)</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            if st.button(f"{icon4} 잘 모름 (기권)", key=f"vote_{equipment['id']}_{label4}", width='stretch'):
-                handle_vote(equipment, label4, current_index, total_equipment)
+        if st.button(f"{icon4} {vote_labels[label4].replace('<br>', ' ')}", key=f"vote_{equipment['id']}_{label4}", width='stretch'):
+            handle_vote(equipment, label4, current_index, total_equipment)
     
     # 탭 네비게이션 (장비 / 상세스펙)
     tab1, tab2 = st.tabs(["장비", "상세스펙"])
@@ -807,14 +860,14 @@ def render_equipment_page(equipment, current_vote, total_equipment, current_inde
 
 
 def handle_vote(equipment, label, current_index, total_equipment):
-    """투표 처리 함수"""
+    """투표 처리 함수 - 항상 다음 페이지로 이동"""
     phone_suffix = st.session_state.phone_suffix
     unit_number = st.session_state.unit_number
     
     if upsert_individual_vote(phone_suffix, unit_number, equipment["id"], label):
         st.session_state.votes[equipment["id"]] = label
         
-        # 마지막 장비가 아니면 다음 장비로 자동 이동
+        # 항상 다음 장비로 이동 (동일한 선택 포함)
         if current_index < total_equipment - 1:
             st.session_state.current_equipment_index = current_index + 1
         else:
@@ -968,7 +1021,7 @@ def thank_you_page():
     </div>
     """, unsafe_allow_html=True)
     
-    render_committee_signature(logo_width=24)
+    render_committee_signature()
     
     # 모바일 대응 닫기 버튼 - history.back() 사용
     st.markdown("""
