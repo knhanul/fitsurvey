@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
@@ -29,11 +30,43 @@ def get_image_path(equipment, image_type="photo"):
     return image_path
 
 st.set_page_config(
-    page_title="아파트 휘트니스 장비 교체 설문",
-    page_icon="🏘️",
+    page_title="아파트 휘트니스 장비 교체 입주민 설문",
+    page_icon="assets/images/Imune_logo_t.png",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
+
+# Open Graph 메타 태그 추가 (공유 시 미리보기 최적화)
+st.markdown("""
+<head>
+    <meta property="og:title" content="아파트 휘트니스 장비 교체 입주민 설문">
+    <meta property="og:description" content="입주민 여러분의 소중한 의견으로 더 나은 휘트니스를 만듭니다.">
+    <meta property="og:image" content="/assets/images/og_survey.png">
+    <meta property="og:type" content="website">
+</head>
+""", unsafe_allow_html=True)
+
+# 스크롤 최상단 이동 함수
+def scroll_to_top():
+    components.html("<script>window.parent.document.querySelector('.main').scrollTo(0,0);</script>", height=0)
+
+
+def render_committee_signature(logo_width=28):
+    """운영 주체 시그니처(로고 + 문구) 표시"""
+    logo_path = os.path.join(STATIC_DIR, "Imune_logo_t.png")
+    brand_color = "#2563eb"
+
+    col_logo, col_text = st.columns([1, 7])
+    with col_logo:
+        if os.path.exists(logo_path):
+            st.image(logo_path, width=logo_width)
+    with col_text:
+        st.markdown(
+            f'<div style="color:{brand_color}; font-size:13px; font-weight:700; line-height:1.9;">'
+            '이문e편한세상휘트니스운영위원회'
+            '</div>',
+            unsafe_allow_html=True,
+        )
 
 # 전역 CSS 스타일 정의 - 통합 및 상단 여백 강제 제거
 st.markdown("""
@@ -60,7 +93,7 @@ header[data-testid="stHeader"], .stAppHeader {
 }
 
 .main .block-container {
-    padding-top: 0.5rem !important;
+    padding-top: 0 !important;
     padding-bottom: 1rem !important;
     max-width: 800px;
 }
@@ -85,12 +118,23 @@ header[data-testid="stHeader"], .stAppHeader {
 [data-testid="stDecoration"] {
     display: none !important;
 }
+section.main,
+section.main > div,
+section.main > div > div,
+[data-testid="stAppViewContainer"],
+[data-testid="stAppViewContainer"] > .main {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+[data-testid="stToolbar"] {
+    display: none !important;
+}
 
-/* 텍스트 크기 계층 정상화 */
+/* 텍스트 크기 계층 정상화 - 다크모드 대응 */
 .page-title {
     font-size: 22px !important;
     font-weight: 800 !important;
-    color: #333333 !important;
+    color: var(--text-color) !important;
     text-align: center !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -100,7 +144,7 @@ header[data-testid="stHeader"], .stAppHeader {
 .section-header {
     font-size: 18px !important;
     font-weight: 700 !important;
-    color: #374151 !important;
+    color: var(--text-color) !important;
     margin: 16px 0 8px 0 !important;
 }
 
@@ -138,12 +182,13 @@ header[data-testid="stHeader"], .stAppHeader {
     border-color: #2563eb !important;
 }
 
-/* 리뷰 페이지 컴팩트화 */
+/* 리뷰 페이지 컴팩트화 - 다크모드 대응 */
 .review-item {
     padding: 8px 12px !important;
     margin: 4px 0 !important;
     font-size: 14px !important;
-    border-bottom: 1px solid #e5e7eb !important;
+    color: var(--text-color) !important;
+    border-bottom: 1px solid var(--border-color) !important;
 }
 
 .review-item:last-child {
@@ -193,11 +238,11 @@ button[key="go_to_review"]:hover {
     background-color: #e5e7eb !important;
 }
 
-/* 장비 투표 화면 스타일 */
+/* 장비 투표 화면 스타일 - 다크모드 대응 */
 .equipment-header {
-    background-color: #f3f4f6;
+    background-color: var(--secondary-background-color);
     padding: 10px 14px;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -206,19 +251,20 @@ button[key="go_to_review"]:hover {
 .location-badge {
     display: inline-flex;
     align-items: center;
-    background-color: #eff6ff;
-    color: #3b82f6;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    opacity: 0.9;
     padding: 3px 8px;
     border-radius: 4px;
     font-size: 14px;
     font-weight: 600;
-    border: 1px solid #dbeafe;
+    border: 1px solid var(--border-color);
     flex-shrink: 0;
 }
 .equipment-title {
     font-size: 20px !important;
     font-weight: 700 !important;
-    color: #111827 !important;
+    color: var(--text-color) !important;
     line-height: 1.3 !important;
     margin: 0 !important;
 }
@@ -256,25 +302,26 @@ button[key="go_to_review"]:hover {
     border-color: #2563eb !important;
 }
 
-/* 이미지 탭 */
+/* 이미지 탭 - 다크모드 대응 */
 .stTabs [data-baseweb="tab-list"] {
-    background-color: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
+    background-color: var(--secondary-background-color);
+    border-bottom: 1px solid var(--border-color);
     padding: 0 12px;
 }
 .stTabs [data-baseweb="tab"] {
     padding: 8px 12px;
     font-size: 14px;
     font-weight: 500;
+    color: var(--text-color);
 }
 .stTabs [data-baseweb="tab"]:hover {
-    background-color: #f3f4f6;
+    background-color: var(--primary-color);
 }
 
-/* 이미지 컨테이너 */
+/* 이미지 컨테이너 - 다크모드 대응 */
 .image-container {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 12px;
     margin: 12px 0;
@@ -285,22 +332,22 @@ button[key="go_to_review"]:hover {
     justify-content: center;
 }
 
-/* 하단 내비게이션 - 4개 버튼 2x2 레이아웃 */
+/* 하단 내비게이션 - 4개 버튼 2x2 레이아웃 - 다크모드 대응 */
 .nav-footer {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #ffffff;
-    border-top: 1px solid #e5e7eb;
+    background-color: var(--background-color);
+    border-top: 1px solid var(--border-color);
     padding: 8px 16px;
     z-index: 999;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
 }
 .page-indicator {
     text-align: center;
     font-size: 12px;
-    color: #6b7280;
+    color: var(--text-color);
+    opacity: 0.7;
     margin-bottom: 8px;
     font-weight: 500;
 }
@@ -687,6 +734,7 @@ def handle_vote(equipment, label, current_index, total_equipment):
 
 
 def equipment_survey_page():
+    scroll_to_top()
     if "phone_suffix" not in st.session_state or "unit_number" not in st.session_state:
         st.session_state.page = "policy_survey"
         st.rerun()
@@ -721,6 +769,7 @@ def equipment_survey_page():
 
 
 def policy_survey_page():
+    scroll_to_top()
     st.markdown('<div class="page-title">🏘️ 장비 교체 정책 투표</div>', unsafe_allow_html=True)
     
     st.markdown('<div class="section-header">💡 교체 범위 및 예산 계획 안내</div>', unsafe_allow_html=True)
@@ -816,23 +865,38 @@ def policy_survey_page():
 
 
 def thank_you_page():
+    scroll_to_top()
     st.markdown('<div class="page-title">🎉 설문 완료</div>', unsafe_allow_html=True)
     st.markdown("""
     <div style="text-align: center; padding: 16px 0;">
-        <div style="font-size: 16px; font-weight: 600; color: #374151; margin-bottom: 8px;">감사합니다!</div>
-        <div style="font-size: 14px; color: #6b7280; line-height: 1.5;">
+        <div style="font-size: 16px; font-weight: 600; color: var(--text-color); margin-bottom: 8px;">감사합니다!</div>
+        <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; line-height: 1.5;">
             소중한 의견을 제출해 주셔서 감사합니다.<br>
             입주민 여러분의 의견을 바탕으로 더 나은 휘트니스 시설을 준비하겠습니다.
         </div>
     </div>
     """, unsafe_allow_html=True)
     
+    render_committee_signature(logo_width=24)
+    
+    # 모바일 대응 닫기 버튼 - history.back() 사용
     st.markdown("""
     <div style="text-align: center; margin-top: 20px;">
-        <p style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">
-            이 창을 닫으려면 아래 버튼을 누르거나 브라우저의 닫기 버튼을 이용해주세요.
+        <p style="color: var(--text-color); opacity: 0.7; font-size: 14px; margin-bottom: 10px;">
+            이 창을 닫으려면 아래 버튼을 눌러주세요.
         </p>
-        <button onclick="window.close();" style="
+        <button onclick="
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.close();
+            }
+            if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
+                setTimeout(function() {
+                    window.location.href = 'about:blank';
+                }, 100);
+            }
+        " style="
             background-color: #ef4444;
             color: white;
             border: none;
@@ -847,6 +911,7 @@ def thank_you_page():
 
 
 def intro_page():
+    scroll_to_top()
     st.markdown('<div class="page-title">🏘️ 우리 아파트 휘트니스, 안전하고 쾌적하게 바꿀 때입니다!</div>', unsafe_allow_html=True)
     
     # 부드러운 안내 메시지 (파란색 박스)
@@ -876,6 +941,8 @@ def intro_page():
     
     여러분의 소중한 1표가 명품 휘트니스를 만듭니다. 지금 바로 아래 버튼을 눌러 설문을 시작해 주세요!
     """)
+
+    render_committee_signature(logo_width=28)
     
     # 다음 페이지 이동 버튼
     if st.button("👉 설문 시작하기", use_container_width=True, type="primary"):
@@ -885,6 +952,7 @@ def intro_page():
 
 def review_page():
     """장비별 선택 내역 검토 및 추가 의견 입력 페이지 - 컴팩트한 디자인"""
+    scroll_to_top()
     st.markdown('<div class="page-title">📝 선택 내역 검토</div>', unsafe_allow_html=True)
     
     if "phone_suffix" not in st.session_state or "unit_number" not in st.session_state:
